@@ -86,45 +86,16 @@
             pointer-events: none;
         }
 
-        /* --- SIDE DECORATIONS (Yangi - Yon ramkalar) --- */
-        .side-decoration {
-            position: fixed;
-            top: 0;
-            bottom: 0;
-            width: 1px;
-            background: linear-gradient(to bottom, transparent, var(--border-dim), transparent);
-            z-index: 40;
-            display: none;
-        }
-        .side-left { left: 2rem; }
-        .side-right { right: 2rem; }
-
-        .side-marker {
-            position: absolute;
-            width: 4px;
-            height: 40px;
-            background: var(--neon-cyan);
-            opacity: 0.5;
-            top: 50%;
-            transform: translateY(-50%);
-        }
-        .side-left .side-marker { left: -1.5px; }
-        .side-right .side-marker { right: -1.5px; }
-
-        @media (min-width: 1024px) {
-            .side-decoration { display: block; }
-        }
-
-        /* --- TOP LEFT LOGO (Yangi - Chap tarafni to'ldirish uchun) --- */
+        /* --- TOP LEFT LOGO VA SOAT --- */
         .top-logo-panel {
             position: fixed;
             top: 2rem;
             left: 2rem; /* Chap tomonda joylashadi */
             z-index: 100;
             display: flex;
-            align-items: center;
-            gap: 1rem;
-            padding: 0.5rem;
+            flex-direction: column; /* Elementlarni ustma-ust joylash uchun */
+            gap: 0.5rem;
+            padding: 0.8rem;
             border-left: 2px solid var(--neon-cyan);
             background: linear-gradient(90deg, rgba(0, 243, 255, 0.05), transparent);
             backdrop-filter: blur(4px);
@@ -143,6 +114,23 @@
             color: var(--neon-cyan);
             letter-spacing: 0.2em;
             text-transform: uppercase;
+            margin-bottom: 0.5rem;
+        }
+
+        /* Raqamli Soat Stili */
+        .digital-clock {
+            font-family: 'JetBrains Mono', monospace;
+            font-size: 1.1rem;
+            font-weight: 700;
+            color: var(--text-color);
+            text-shadow: 0 0 5px rgba(0, 243, 255, 0.5);
+            letter-spacing: 0.05em;
+            display: flex;
+            gap: 2px;
+        }
+
+        .clock-time {
+            color: var(--neon-cyan);
         }
 
         /* --- CONTACT BUTTON (O'zgartirilgan - Ixchamroq) --- */
@@ -557,19 +545,13 @@
         <div class="scanlines"></div>
     </div>
 
-    <!-- YON DEKORATSIYALAR (Yangi - Vizual Ramka) -->
-    <div class="side-decoration side-left">
-        <div class="side-marker"></div>
-    </div>
-    <div class="side-decoration side-right">
-        <div class="side-marker"></div>
-    </div>
-
-    <!-- TOP LEFT LOGO (Yangi - Chap tarafni muvozanatlash uchun) -->
+    <!-- TOP LEFT LOGO VA SOAT (Yangilandi) -->
     <div class="top-logo-panel">
         <div>
             <div class="logo-text">ABROR</div>
             <div class="logo-sub">PERSONAL HUB</div>
+            <!-- Elektron Soat -->
+            <div id="digital-clock" class="digital-clock">00:00:00</div>
         </div>
     </div>
 
@@ -673,9 +655,27 @@
 
         function initIcons() { if (window.lucide) lucide.createIcons(); }
 
+        // --- ELEKTRON SOAT FUNKSIYASI ---
+        function updateClock() {
+            const now = new Date();
+            const hours = String(now.getHours()).padStart(2, '0');
+            const minutes = String(now.getMinutes()).padStart(2, '0');
+            const seconds = String(now.getSeconds()).padStart(2, '0');
+            
+            const clockElement = document.getElementById('digital-clock');
+            if (clockElement) {
+                // Soniyalarni ajratib ranglash uchun
+                clockElement.innerHTML = `${hours}:${minutes}:<span class="clock-time">${seconds}</span>`;
+            }
+        }
+
         document.addEventListener('DOMContentLoaded', () => {
             initIcons();
             type();
+            
+            // Soatni ishga tushirish
+            updateClock();
+            setInterval(updateClock, 1000);
             
             const linksContainer = document.getElementById('links-list');
             if (linksContainer) {
